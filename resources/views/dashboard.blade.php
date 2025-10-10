@@ -28,7 +28,7 @@
                         <!-- Evaluasi -->
                         <a href="{{ route('evaluations.index') }}" 
                            class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg p-6 text-center shadow-md transition">
-                            <h2 class="text-xl font-semibold mb-2">Nilai</h2>
+                            <h2 class="text-xl font-semibold mb-2">Penilaian</h2>
                             <p>Input dan lihat hasil penilaian.</p>
                         </a>
 
