@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-gray-800 leading-tight tracking-wide">
-            ⚙️ {{ __('Perhitungan MOORA') }}
+             {{ __('Perhitungan MOORA') }}
         </h2>
         <p class="text-sm text-gray-500 mt-1">Langkah-langkah perhitungan Multi-Objective Optimization on the basis of Ratio Analysis</p>
     </x-slot>
