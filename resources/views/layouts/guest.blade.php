@@ -23,7 +23,7 @@
                 SPK MOORA
             </h1>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Sistem Pendukung Keputusan Penilaian Siswa
+                Sistem Pendukung Keputusan Penerima Program Indonesia Pintar
             </p>
         </div>
 
