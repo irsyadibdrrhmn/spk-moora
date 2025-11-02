@@ -1,34 +1,86 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Siswa') }}
-        </h2>
+        <div class="page-header">
+            <div>
+                <h2 class="page-title">Tambah Siswa</h2>
+                <p class="page-subtitle">Tambahkan data siswa baru ke dalam sistem</p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12 max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-            <form action="{{ route('students.store') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">NIS</label>
-                    <input type="text" name="nis" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+    <div class="py-8">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Form Data Siswa</h3>
                 </div>
+                <div class="card-body">
+                    <form action="{{ route('students.store') }}" method="POST" class="space-y-6">
+                        @csrf
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Nama</label>
-                    <input type="text" name="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                </div>
+                        <div class="form-group">
+                            <label for="nis" class="form-label">
+                                NIS (Nomor Induk Siswa)
+                            </label>
+                            <input type="text" 
+                                   id="nis" 
+                                   name="nis" 
+                                   value="{{ old('nis') }}"
+                                   class="form-input"
+                                   placeholder="Masukkan NIS (opsional)">
+                            @error('nis')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Kelas</label>
-                    <input type="text" name="class" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                </div>
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                Nama Lengkap <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="name" 
+                                   name="name" 
+                                   value="{{ old('name') }}"
+                                   class="form-input" 
+                                   placeholder="Masukkan nama lengkap siswa"
+                                   required>
+                            @error('name')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                <div class="flex items-center space-x-2">
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md">Simpan</button>
-                    <a href="{{ route('students.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded-md">Kembali</a>
+                        <div class="form-group">
+                            <label for="class" class="form-label">
+                                Kelas
+                            </label>
+                            <input type="text" 
+                                   id="class" 
+                                   name="class" 
+                                   value="{{ old('class') }}"
+                                   class="form-input"
+                                   placeholder="Contoh: X IPA 1">
+                            @error('class')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <a href="{{ route('students.index') }}" class="btn-outline">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                Kembali
+                            </a>
+                            <button type="submit" class="btn-primary">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Simpan Data
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </x-app-layout>
