@@ -100,6 +100,7 @@ class MooraController extends Controller
             ];
         }
 
+        // Convert to collection for blade usage
         $ranking = collect($ranking);
 
         return view('moora.ranking', compact('ranking', 'criteria'));
