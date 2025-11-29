@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/students-template', [StudentController::class, 'downloadTemplate'])->name('students.template');
     
     Route::resource('criteria', CriteriaController::class);
-    Route::resource('evaluations', EvaluationController::class)->only(['index','edit','create','store','destroy']);
+    Route::resource('evaluations', EvaluationController::class)->only(['index','edit','create','store','update','destroy']);
     
     // MOORA Routes - Separated
     Route::get('/moora', [MooraController::class, 'index'])->name('moora.index');

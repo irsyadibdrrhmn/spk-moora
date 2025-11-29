@@ -62,7 +62,9 @@ class EvaluationController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $student = Student::findOrFail($id);
+        $criteria = Criteria::all();
+        return view('evaluations.edit', compact('student', 'criteria'));
     }
 
     /**
@@ -70,7 +72,18 @@ class EvaluationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'scores'      => 'required|array',
+        ]);
+
+        foreach($request->scores as $criteria_id => $score){
+            Evaluation::updateOrCreate(
+                ['student_id'=>$id, 'criteria_id'=>$criteria_id],
+                ['score'=>$score]
+            );
+        }
+
+        return redirect()->route('evaluations.index')->with('success','Nilai berhasil diperbarui');
     }
 
     /**
