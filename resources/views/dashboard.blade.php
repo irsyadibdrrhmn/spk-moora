@@ -31,7 +31,7 @@
             </div>
 
             <!-- Menu Cards Grid -->
-<div class="flex flex-wrap gap-6">
+<div class="flex flex-nowrap gap-6">
 
 
     <!-- User Management Card (Admin only) -->

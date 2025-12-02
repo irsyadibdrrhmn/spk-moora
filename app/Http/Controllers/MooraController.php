@@ -96,7 +96,11 @@ class MooraController extends Controller
             $ranking[] = [
                 'student' => $students->where('id',$sid)->first(),
                 'score'   => $val,
-                'rank'    => $rank++
+                'rank'    => $rank++,
+                // include original criterion values for printing
+                'values'  => $Xij[$sid] ?? [],
+                // include normalized values (optional) if needed in view
+                'normalized' => $Xij_star[$sid] ?? [],
             ];
         }
 
@@ -104,5 +108,64 @@ class MooraController extends Controller
         $ranking = collect($ranking);
 
         return view('moora.ranking', compact('ranking', 'criteria'));
+    }
+
+    // Print ranking report
+    public function print()
+    {
+        $students = Student::with('evaluations')->get();
+        $criteria = Criteria::all();
+
+        // Matriks keputusan (Xij)
+        $Xij = [];
+        foreach ($criteria as $c) {
+            foreach ($students as $s) {
+                $eval = $s->evaluations->where('criteria_id', $c->id)->first();
+                $Xij[$s->id][$c->id] = $eval ? $eval->score : 0;
+            }
+        }
+
+        // Normalisasi (Xij*)
+        $Xij_star = [];
+        foreach ($criteria as $c) {
+            $denominator = sqrt(array_sum(array_map(fn($v) => pow($v,2), array_column($Xij, $c->id))));
+            foreach ($students as $s) {
+                $Xij_star[$s->id][$c->id] = $denominator ? $Xij[$s->id][$c->id] / $denominator : 0;
+            }
+        }
+
+        // Hitung Yi
+        $Yi = [];
+        foreach ($students as $s) {
+            $benefit = 0;
+            $cost = 0;
+            foreach ($criteria as $c) {
+                if ($c->type == 'benefit') {
+                    $benefit += $c->weight * $Xij_star[$s->id][$c->id];
+                } else {
+                    $cost += $c->weight * $Xij_star[$s->id][$c->id];
+                }
+            }
+            $Yi[$s->id] = $benefit - $cost;
+        }
+
+        // Ranking
+        arsort($Yi);
+        $ranking = [];
+        $rank = 1;
+        foreach ($Yi as $sid => $val) {
+            $ranking[] = [
+                'student' => $students->where('id',$sid)->first(),
+                'score'   => $val,
+                'rank'    => $rank++,
+                'values'  => $Xij[$sid] ?? [],
+                'normalized' => $Xij_star[$sid] ?? [],
+            ];
+        }
+
+        $ranking = collect($ranking);
+        $jumlahPenerima = (int) request('jumlah_penerima', count($ranking));
+
+        return view('moora.print', compact('ranking', 'criteria', 'jumlahPenerima'));
     }
 }

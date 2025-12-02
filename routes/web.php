@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     // MOORA Routes - Separated (accessible to all roles)
     Route::get('/moora', [MooraController::class, 'index'])->name('moora.index');
     Route::get('/moora/ranking', [MooraController::class, 'ranking'])->name('moora.ranking');
+    Route::get('/moora/print', [MooraController::class, 'print'])->name('moora.print');
 });
 
 // Admin only routes

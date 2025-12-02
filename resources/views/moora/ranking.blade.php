@@ -12,7 +12,7 @@
                     </svg>
                     Lihat Perhitungan
                 </a>
-                <button onclick="window.print()" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm hover:shadow">
+                <button onclick="window.location.href='{{ route('moora.print', ['jumlah_penerima' => request('jumlah_penerima', count($ranking))]) }}'" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm hover:shadow">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
@@ -177,7 +177,10 @@
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Nama Siswa</th>
                                     <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">NIS</th>
                                     <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Kelas</th>
-                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Nilai Y<sub>i</sub></th>
+                                    @foreach($criteria as $c)
+                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">{{ $c->code }}</th>
+                                    @endforeach
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Nilai Akhir</th>
                                     <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
@@ -204,6 +207,11 @@
                                         <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-300">
                                             {{ $r['student']->class ?? '-' }}
                                         </td>
+                                        @foreach($criteria as $c)
+                                            <td class="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-200">
+                                                <span class="font-mono text-sm">{{ isset($r['values'][$c->id]) ? number_format($r['values'][$c->id], 4) : '-' }}</span>
+                                            </td>
+                                        @endforeach
                                         <td class="px-4 py-3 text-center">
                                             <span class="font-mono font-semibold text-sm text-gray-900 dark:text-gray-100">
                                                 {{ number_format($r['score'], 6) }}
@@ -282,12 +290,175 @@
     <!-- Print Styles -->
     <style>
         @media print {
-            .btn, .page-header a, nav, header button, form {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            /* Hide navigation and header elements */
+            nav, header, button, input, form, select,
+            .page-header, .flex.gap-2, .absolute, .top-5, .right-5,
+            .py-8, .py-12, .px-6.py-4.border-b {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            /* Hide all decorative containers but keep content */
+            .rounded-xl, .shadow-sm, .bg-gradient-to-r,
+            .bg-green-50, .bg-emerald-50, .bg-blue-100, .bg-green-100,
+            .bg-gray-100, .grid.grid-cols-1, .mt-8, .space-y-6,
+            .penerima, .quick-info {
                 display: none !important;
             }
-            .bg-white, .dark\:bg-gray-800 {
-                break-inside: avoid;
-                page-break-inside: avoid;
+
+            /* Show main and table areas */
+            main {
+                display: block !important;
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* Show table container divs */
+            main > div {
+                display: block !important;
+            }
+
+            main > div > div {
+                display: block !important;
+            }
+
+            /* Core table styling */
+            table {
+                display: table !important;
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                font-size: 9pt !important;
+                color: #000 !important;
+                background: white !important;
+            }
+
+            table thead {
+                display: table-header-group !important;
+                background: #f0f0f0 !important;
+            }
+
+            table thead tr {
+                display: table-row !important;
+            }
+
+            table tbody {
+                display: table-row-group !important;
+            }
+
+            table tbody tr {
+                display: table-row !important;
+                page-break-inside: avoid !important;
+            }
+
+            table tr {
+                display: table-row !important;
+            }
+
+            table th {
+                display: table-cell !important;
+                border: 1px solid #000 !important;
+                padding: 4px !important;
+                text-align: center !important;
+                color: #000 !important;
+                background: #f0f0f0 !important;
+                font-weight: bold !important;
+                font-size: 9pt !important;
+                overflow: visible !important;
+            }
+
+            table td {
+                display: table-cell !important;
+                border: 1px solid #000 !important;
+                padding: 4px !important;
+                text-align: center !important;
+                color: #000 !important;
+                background: white !important;
+                font-size: 9pt !important;
+                overflow: visible !important;
+            }
+
+            table td:nth-child(2) {
+                text-align: left !important;
+            }
+
+            /* Show all text content inside table cells */
+            table span, table div, table p {
+                display: inline !important;
+                visibility: visible !important;
+                color: #000 !important;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: inherit !important;
+            }
+
+            /* Hide SVG icons but keep text */
+            svg {
+                display: none !important;
+            }
+
+            /* Allow text wrapping in cells */
+            table td, table th {
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+
+            /* Remove all utility classes that might hide content */
+            [class*="inline-flex"],
+            [class*="rounded-full"],
+            [class*="px-2"],
+            [class*="py-0"],
+            [class*="text-xs"],
+            [class*="font-medium"],
+            [class*="gap-"] {
+                display: inline !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                color: #000 !important;
+                border: none !important;
+            }
+
+            /* Override all Tailwind color classes inside tables */
+            table [class*="text-"], 
+            table [class*="bg-"] {
+                color: #000 !important;
+                background: white !important;
+            }
+
+            /* Container sizing */
+            .max-w-7xl, .mx-auto, .sm\:px-6, .lg\:px-8 {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .overflow-x-auto {
+                overflow: visible !important;
+            }
+
+            .divide-y {
+                border-collapse: collapse !important;
+            }
+
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            html {
+                background: white !important;
             }
         }
     </style>
